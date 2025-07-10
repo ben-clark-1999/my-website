@@ -15,17 +15,17 @@ const projects = [
 export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col items-center overflow-x-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-[#0c0c10] dark:via-[#0c0c10] dark:to-black px-4 py-24 sm:px-6 lg:px-8">
-      {/* Decorative blobs */}
+      {/* Decorative blobs with parallax */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 0.4, scale: 1 }}
-        transition={{ duration: 1.8, ease: "easeOut" }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 0.5, y: [-20, 20, -20] }}
+        transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
         className="pointer-events-none absolute left-[10%] top-[-120px] h-96 w-96 rounded-full bg-purple-400 blur-3xl dark:bg-purple-700"
       />
       <motion.div
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 0.4, scale: 1 }}
-        transition={{ duration: 1.8, ease: "easeOut", delay: 0.3 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 0.5, y: [20, -20, 20] }}
+        transition={{ repeat: Infinity, duration: 10, ease: "easeInOut", delay: 0.3 }}
         className="pointer-events-none absolute right-[-120px] top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600"
       />
 
@@ -73,11 +73,11 @@ export default function Home() {
         {projects.map((proj, idx) => (
           <motion.div
             key={proj.title}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.6, delay: idx * 0.1 }}
-            className="rounded-2xl border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md hover:-translate-y-1 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900/60 sm:transform-none"
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: idx * 0.1 }}
+            className="rounded-2xl transition-all duration-500 hover:scale-[1.015] hover:rotate-[-1deg] border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/60"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
