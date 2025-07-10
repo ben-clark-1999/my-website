@@ -84,10 +84,11 @@ export default function Home() {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 120, damping: 10 }}
             >
-              <div className="relative h-16 w-16">
+              <div className="relative h-10 w-20 flex items-center justify-center">
                 <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-30" />
-                <VoiceAnimation className="relative z-10 h-16 w-16" />
+                <VoiceAnimation className="relative z-10 h-20 w-20" />
               </div>
+
             </motion.div>
 
 
