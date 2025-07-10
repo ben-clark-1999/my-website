@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import VoiceAnimation from "@/components/ui/VoiceAnimation";
+
 import Link from "next/link";
 
 const projects = [
@@ -28,8 +29,7 @@ export default function Home() {
         transition={{ duration: 1.8, ease: "easeOut", delay: 0.3 }}
         className="pointer-events-none absolute right-[-120px] top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600"
       />
-
-      {/* Hero Section */}
+      {/* Hero */}
       <motion.header
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -67,29 +67,30 @@ export default function Home() {
           </a>
         </div>
       </motion.header>
-
       {/* Projects */}
       <section className="z-10 grid w-full max-w-4xl auto-rows-fr gap-8 sm:grid-cols-2 md:grid-cols-3">
         {projects.map((proj, idx) => (
           <motion.div
             key={proj.title}
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, delay: idx * 0.1 }}
-            className="rounded-2xl border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md hover:-translate-y-1 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900/60 sm:transform-none"
+            className="rounded-2xl border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md hover:-translate-y-1 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900/60"
           >
             <motion.div
+              className="mb-4 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 p-4 shadow-lg"
               initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
+              animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 120, damping: 10 }}
-              className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md"
             >
-              <div className="relative h-24 w-24 flex items-center justify-center">
-                <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-20" />
+              <div className="relative h-10 w-20 flex items-center justify-center">
+                <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-30" />
                 <VoiceAnimation className="relative z-10 h-20 w-20" />
               </div>
+
             </motion.div>
+
 
             <h3 className="mb-2 text-xl font-semibold text-zinc-800 dark:text-zinc-100">
               {proj.title}
@@ -106,7 +107,6 @@ export default function Home() {
           </motion.div>
         ))}
       </section>
-
       {/* Footer */}
       <footer className="z-10 mt-24 text-sm text-zinc-500 dark:text-zinc-600">
         © {new Date().getFullYear()} Benjamin Clark • Built with Next.js & Tailwind CSS
