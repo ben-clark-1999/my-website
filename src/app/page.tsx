@@ -1,5 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
+import VoiceAnimation from "@/components/ui/VoiceAnimation";
+
 import Link from "next/link";
 
 const projects = [
@@ -76,9 +78,19 @@ export default function Home() {
             transition={{ duration: 0.6, delay: idx * 0.1 }}
             className="rounded-2xl border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md hover:-translate-y-1 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900/60"
           >
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-2xl">
-              {proj.emoji}
-            </div>
+            <motion.div
+              className="mb-4 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 p-4 shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 120, damping: 10 }}
+            >
+              <div className="relative h-16 w-16">
+                <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-30" />
+                <VoiceAnimation className="relative z-10 h-16 w-16" />
+              </div>
+            </motion.div>
+
+
             <h3 className="mb-2 text-xl font-semibold text-zinc-800 dark:text-zinc-100">
               {proj.title}
             </h3>
