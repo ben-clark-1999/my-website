@@ -11,12 +11,15 @@ export default function Home() {
       <h2 className="text-2xl font-semibold mb-4">Projects</h2>
       <ul className="space-y-3">
         <li>
-          <Link
-            href="/projects/af-chatbot"
+          <a
+            href="https://af-chatbot-vcnigogbwyle6antnmcnxr.streamlit.app/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-blue-600 hover:underline text-lg"
           >
             👉 AF Chatbot – Anytime Fitness Assistant
-          </Link>
+          </a>
+
         </li>
         {/* Add more projects here later */}
       </ul>
