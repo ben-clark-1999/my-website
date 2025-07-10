@@ -121,23 +121,6 @@ export default function Home() {
         ))}
       </motion.section>
 
-      {/* Mobile Chat Input (Send Button) */}
-      <div className="fixed bottom-4 left-0 right-0 mx-auto w-full max-w-md px-4 sm:hidden z-20">
-        <div className="flex items-center rounded-full border border-zinc-300 bg-white p-2 shadow-md dark:border-zinc-700 dark:bg-zinc-900">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            className="flex-1 bg-transparent px-4 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none dark:text-white"
-          />
-          <button
-            className="ml-2 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition"
-            onClick={() => alert("Send button clicked. Connect this to your logic.")}
-          >
-            Send
-          </button>
-        </div>
-      </div>
-
       {/* Footer */}
       <footer className="z-10 mt-24 text-sm text-zinc-500 dark:text-zinc-600">
         © {new Date().getFullYear()} Benjamin Clark • Built with Next.js & Tailwind CSS
