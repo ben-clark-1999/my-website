@@ -68,14 +68,28 @@ export default function Home() {
         </div>
       </motion.header>
 
-      {/* Projects */}
-      <section className="z-10 grid w-full max-w-4xl auto-rows-fr gap-8 sm:grid-cols-2 md:grid-cols-3">
+      {/* Projects with scroll animation */}
+      <motion.section
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: false, amount: 0.2 }}
+        variants={{
+          hidden: {},
+          show: {
+            transition: {
+              staggerChildren: 0.2,
+            },
+          },
+        }}
+        className="z-10 grid w-full max-w-4xl auto-rows-fr gap-8 sm:grid-cols-2 md:grid-cols-3"
+      >
         {projects.map((proj, idx) => (
           <motion.div
             key={proj.title}
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            variants={{
+              hidden: { opacity: 0, y: 100 },
+              show: { opacity: 1, y: 0, rotateX: 0 },
+            }}
             transition={{ duration: 0.7, ease: "easeOut", delay: idx * 0.1 }}
             className="rounded-2xl transition-all duration-500 hover:scale-[1.015] hover:rotate-[-1deg] border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/60"
           >
@@ -105,7 +119,7 @@ export default function Home() {
             </a>
           </motion.div>
         ))}
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <footer className="z-10 mt-24 text-sm text-zinc-500 dark:text-zinc-600">
