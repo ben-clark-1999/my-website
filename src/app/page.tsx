@@ -1,23 +1,20 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
-// import { Button } from "@/components/ui/button";
 
 const projects = [
   {
     title: "AF Chatbot – Anytime Fitness Assistant",
     href: "https://af-chatbot-vcnigogbwyle6antnmcnxr.streamlit.app/",
-    description:
-      "Conversational AI assistant built with OpenAI, Streamlit & Next.js.",
+    description: "Conversational AI assistant built with OpenAI, Streamlit & Next.js.",
     emoji: "🤖",
   },
-  // 👉 Add more projects here as you build them!
 ];
 
 export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col items-center overflow-x-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-[#0c0c10] dark:via-[#0c0c10] dark:to-black px-4 py-24 sm:px-6 lg:px-8">
-      {/* --- Decorative blurred blobs --- */}
+      {/* Decorative blobs */}
       <motion.div
         initial={{ opacity: 0, scale: 0.6 }}
         animate={{ opacity: 0.4, scale: 1 }}
@@ -30,8 +27,7 @@ export default function Home() {
         transition={{ duration: 1.8, ease: "easeOut", delay: 0.3 }}
         className="pointer-events-none absolute right-[-120px] top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600"
       />
-
-      {/* --- Hero Section --- */}
+      {/* Hero */}
       <motion.header
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -48,12 +44,28 @@ export default function Home() {
           <span className="font-semibold text-zinc-800 dark:text-zinc-100">
             AI, automation & meaningful digital products
           </span>
-          . I enjoy turning complex problems into elegant, user‑centric
-          solutions.
+          . I enjoy turning complex problems into elegant, user‑centric solutions.
         </p>
+        <div className="mt-6 flex justify-center gap-4">
+          <a
+            href="/Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded bg-gradient-to-br from-purple-600 to-indigo-600 px-5 py-2 text-sm font-medium text-white shadow hover:opacity-90 transition"
+          >
+            📄 View Resume
+          </a>
+          <a
+            href="https://www.linkedin.com/in/benjamin-michael-clark/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded border border-purple-600 px-5 py-2 text-sm font-medium text-purple-700 dark:text-purple-300 hover:bg-purple-600 hover:text-white transition"
+          >
+            🔗 LinkedIn
+          </a>
+        </div>
       </motion.header>
-
-      {/* --- Projects Grid --- */}
+      {/* Projects */}
       <section className="z-10 grid w-full max-w-4xl auto-rows-fr gap-8 sm:grid-cols-2 md:grid-cols-3">
         {projects.map((proj, idx) => (
           <motion.div
@@ -70,9 +82,7 @@ export default function Home() {
             <h3 className="mb-2 text-xl font-semibold text-zinc-800 dark:text-zinc-100">
               {proj.title}
             </h3>
-            <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
-              {proj.description}
-            </p>
+            <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">{proj.description}</p>
             <a
               href={proj.href}
               target="_blank"
@@ -81,15 +91,12 @@ export default function Home() {
             >
               View Project
             </a>
-
           </motion.div>
         ))}
       </section>
-
-      {/* --- Footer --- */}
+      {/* Footer */}
       <footer className="z-10 mt-24 text-sm text-zinc-500 dark:text-zinc-600">
-        © {new Date().getFullYear()} Benjamin Clark • Built with Next.js &
-        Tailwind CSS
+        © {new Date().getFullYear()} Benjamin Clark • Built with Next.js & Tailwind CSS
       </footer>
     </main>
   );
