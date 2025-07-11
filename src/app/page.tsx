@@ -15,16 +15,19 @@ const projects = [
 export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col items-center overflow-x-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-[#0c0c10] dark:via-[#0c0c10] dark:to-black px-4 py-24 sm:px-6 lg:px-8">
-      {/* Decorative blobs with continuous motion */}
+
+      {/* 🟣 Purple blob drifting diagonally */}
       <motion.div
-        animate={{ y: [0, 30, 0] }}
+        animate={{ x: [0, -30, 0], y: [0, 30, 0] }}
         transition={{ repeat: Infinity, duration: 20, ease: "easeInOut" }}
-        className="pointer-events-none absolute left-[10%] top-[-120px] h-96 w-96 rounded-full bg-purple-400 blur-3xl dark:bg-purple-700 opacity-50"
+        className="pointer-events-none absolute left-[10%] top-[-120px] h-96 w-96 rounded-full bg-purple-400 blur-3xl dark:bg-purple-700 opacity-40"
       />
+
+      {/* 🔵 Blue blob drifting diagonally */}
       <motion.div
-        animate={{ y: [0, -30, 0] }}
+        animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
         transition={{ repeat: Infinity, duration: 20, ease: "easeInOut", delay: 0.3 }}
-        className="pointer-events-none absolute right-[-120px] top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600 opacity-50"
+        className="pointer-events-none absolute right-[-120px] top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600 opacity-40"
       />
 
       {/* Hero Section */}
@@ -66,7 +69,7 @@ export default function Home() {
         </div>
       </motion.header>
 
-      {/* Projects with scroll animation */}
+      {/* Projects */}
       <motion.section
         initial="hidden"
         whileInView="show"
