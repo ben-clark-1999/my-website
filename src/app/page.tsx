@@ -5,12 +5,19 @@ import Link from "next/link";
 
 const projects = [
   {
-    title: "AF Chatbot – Anytime Fitness Assistant",
-    href: "https://af-chatbot-vcnigogbwyle6antnmcnxr.streamlit.app/",
-    description: "Conversational AI assistant built with OpenAI, Streamlit & Next.js.",
+    title: "AF Chatbot",
+    href: "/projects/af-chatbot",
+    description: "Conversational AI assistant for Anytime Fitness.",
     emoji: "🤖",
   },
+  {
+    title: "FocusFlow",
+    href: "/projects/focusflow",
+    description: "Electron + React ambient sound mixer with presets.",
+    emoji: "🎧",
+  },
 ];
+
 
 export default function Home() {
   return (
@@ -59,7 +66,7 @@ export default function Home() {
       >
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
           <span className="bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
-            Benjamin Clark
+            Benjamin Clark reeee
           </span>
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
