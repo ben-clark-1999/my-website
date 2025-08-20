@@ -1,0 +1,686 @@
+/* ================================
+   Theme Tokens
+   ================================ */
+
+   :root{
+    --bg: #0e1420;
+    --panel: #111a2a;
+    --panel-2: #0c1320;
+  
+    --text: #e8eefc;
+    --muted: #a8b0c2;
+    --muted-2: #7e879a;
+  
+    --border: rgba(255,255,255,.08);
+    --border-strong: rgba(255,255,255,.14);
+  
+    --accent: #6d5ef5;    /* primary accent (sliders fill) */
+    --accent-2: #59d0ff;  /* secondary accent */
+    --active-icon: var(--accent-2); /* active card/icon color (dark default) */
+  
+    --track: rgba(255,255,255,.14);
+    --thumb: #0d1626;
+  
+    --radius: 22px;
+    --radius-sm: 14px;
+  
+    --focus: color-mix(in oklab, var(--accent-2) 70%, white 0%);
+    --focus-ring: 3px;
+  
+    --shadow-card: 0 18px 55px rgba(2,6,23,.35);
+  
+    /* Ambient mesh colors (dark default) */
+    --mesh-dot: rgba(255,255,255,.85);
+    --mesh-line: rgba(149,161,255,.20);
+    --mesh-fade: rgba(3,8,18,.06);
+  }
+  
+  [data-theme="light"]{
+    --bg: #f6f8fc;
+    --panel: #ffffff;
+    --panel-2: #fbfdff;
+  
+    --text: #0e1526;
+    --muted: #44506a;
+    --muted-2: #657390;
+  
+    --border: rgba(7,11,26,.08);
+    --border-strong: rgba(7,11,26,.14);
+  
+    /* Slider/active hues for light */
+    --accent: #4338ca;   /* stronger on white for contrast */
+    --accent-2: #59d0ff;
+    --active-icon: #4338ca;
+  
+    --track: rgba(12,19,32,.16);
+    --thumb: #0d1626;
+  
+    /* Ambient mesh (light) */
+    --mesh-dot: rgba(10,22,43,.85);
+    --mesh-line: rgba(67,56,202,.18);
+    --mesh-fade: rgba(255,255,255,.06);
+  }
+  
+  /* >>> Stronger alternatives <<< */
+  
+  /* NEON DARK (ink black + cyan/teal accents) */
+  [data-theme="neon-dark"]{
+    --bg: #070b12;
+    --panel: #0b1220;
+    --panel-2: #09101c;
+  
+    --text: #eaf6ff;
+    --muted: #9ab6c8;
+    --muted-2: #7aa0b5;
+    --border: rgba(180,220,255,.08);
+    --border-strong: rgba(180,220,255,.16);
+  
+    --accent: #22d3ee;
+    --accent-2: #38bdf8;
+    --active-icon: #67e8f9;
+  
+    --track: rgba(180,220,255,.16);
+    --thumb: #0b1624;
+  
+    --mesh-dot: rgba(210,245,255,.92);
+    --mesh-line: rgba(56,189,248,.26);
+    --mesh-fade: rgba(4,10,18,.10);
+  
+    /* logo tints (if used) */
+    --logo-halo-1:#60e8ff; --logo-halo-2:#22d3ee;
+    --logo-dot:#22d3ee;
+  }
+  
+  /* LIGHT — WARM (parchment + violet/amber accents) */
+  [data-theme="light-warm"]{
+    /* Surfaces */
+    --bg: #fff2d9;            /* warmer, brighter background */
+    --panel: #ffffff;
+    --panel-2: #fff8ea;
+  
+    /* Text & lines */
+    --text: #2a2116;          /* deep brown/ink */
+    --muted: #6f5c45;
+    --muted-2: #54483a;
+    --border: rgba(106,82,51,.18);
+    --border-strong: rgba(106,82,51,.26);
+  
+    /* Controls (slider fill, active icons) */
+    --accent: #7c3aed;        /* violet slider fill */
+    --accent-2: #f59e0b;      /* amber secondary */
+    --active-icon: #9333ea;
+  
+    /* Slider track & thumb */
+    --track: rgba(106,82,51,.22);
+    --thumb: #1f2937;
+  
+    /* Ambient mesh */
+    --mesh-dot: rgba(51,39,24,.95);
+    --mesh-line: rgba(124,58,237,.34);
+    --mesh-fade: rgba(255,255,255,.14);
+  
+    /* Logo tinting (optional, if you use it) */
+    --logo-halo-1:#c4b5fd; --logo-halo-2:#fbbf24;
+    --logo-dot:#8b5cf6;
+  }
+  
+  /* Theme-specific waves */
+  [data-theme="neon-dark"] .wave{
+    background:
+      radial-gradient(120px 40px at 10% 50%, color-mix(in oklab, #22d3ee 30%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 40% 50%, color-mix(in oklab, #38bdf8 26%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 70% 50%, color-mix(in oklab, #22d3ee 30%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 100% 50%, color-mix(in oklab, #38bdf8 26%, transparent), transparent 60%);
+  }
+  [data-theme="light-warm"] .wave{
+    background:
+      radial-gradient(120px 40px at 10% 50%, color-mix(in oklab, #7c3aed 28%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 40% 50%, color-mix(in oklab, #f59e0b 24%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 70% 50%, color-mix(in oklab, #7c3aed 28%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 100% 50%, color-mix(in oklab, #f59e0b 24%, transparent), transparent 60%);
+  }
+  
+  /* Status line color tokens */
+  :root { --status: #cfd7ea; }
+  [data-theme="light"]{ --status: #2b3550; }
+  [data-theme="light-warm"]{ --status: #2e2c28; }
+  
+  /* ================================
+     Base
+     ================================ */
+  
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  
+  html, body, #root { height: 100%; }
+  
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #162239 0%, var(--bg) 52%, var(--bg) 100%);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Warm background override for the whole page when light-warm is active */
+  [data-theme="light-warm"] body{
+    background: linear-gradient(180deg, #fff7ed 0%, #fef3c7 40%, #fde68a 100%);
+    color:#1f2937;
+  }
+  
+  a{ color: var(--accent-2); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+  
+  .visually-hidden{
+    position:absolute!important;
+    width:1px; height:1px;
+    padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0 0 0 0);
+    white-space:nowrap; border:0;
+  }
+  
+  /* ================================
+     Layout
+     ================================ */
+  
+  .app{
+    position: relative;
+    display:grid;
+    grid-template-rows:auto auto auto 1fr auto;
+    min-height:100%;
+    gap:16px;
+    max-width:1200px;            /* keep inside the visual frame */
+    margin:0 auto;
+    padding:16px 16px 72px;      /* extra bottom padding so last row isn't clipped */
+    z-index: 1;                  /* above ambient mesh */
+  }
+  
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  
+  .logo{
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:.3px;
+    margin:0;
+  }
+  
+  .spacer{ flex:1 1 auto; }
+  
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap:18px;
+    align-content:start;
+    margin-bottom:16px; /* breathing room above status bar */
+  }
+  
+  /* ================================
+     Ambient: Constellation Mesh
+     ================================ */
+  
+  .ambient-mesh{
+    position: fixed;
+    inset: 0;
+    z-index: 0;          /* behind cards */
+    pointer-events: none;
+  }
+  
+  /* Damp effect further for reduced motion users via JS + CSS */
+  @media (prefers-reduced-motion: reduce){
+    :root{ --mesh-fade: rgba(3,8,18,.12); }
+    [data-theme="light"]{ --mesh-fade: rgba(255,255,255,.12); }
+  }
+  
+  /* ================================
+     Buttons
+     ================================ */
+  
+  .btn{
+    --btn-bg: color-mix(in oklab, var(--accent) 92%, black 0%);
+    --btn-text: #fff;
+    appearance:none;
+    border:0;
+    border-radius:14px;
+    background:var(--btn-bg);
+    color:var(--btn-text);
+    padding:10px 14px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(109,94,245,.35);
+    transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); }
+  .btn:active{ transform: translateY(0); }
+  .btn:focus-visible{ outline: var(--focus-ring) solid var(--focus); outline-offset:3px; }
+  
+  .btn.ghost{
+    --btn-bg: transparent;
+    --btn-text: var(--text);
+    border:1px solid var(--border);
+    box-shadow:none;
+  }
+  .btn.ghost:hover{ border-color: var(--border-strong); }
+  
+  /* ================================
+     Inputs (match button aesthetic)
+     ================================ */
+  
+  .ff-input,
+  .ff-select{
+    appearance: none;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--panel-2) 98%, white 0%);
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(2,6,23,.08) inset, 0 4px 18px rgba(2,6,23,.06);
+  }
+  
+  .ff-input::placeholder{ color: var(--muted); font-weight: 500; }
+  
+  .ff-input:focus-visible,
+  .ff-select:focus-visible{
+    outline: var(--focus-ring) solid var(--focus);
+    outline-offset: 3px;
+    border-color: var(--border-strong);
+  }
+  
+  /* Custom chevron for select */
+  .ff-select{
+    padding-right: 34px;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23a8b0c2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+  }
+  
+  /* ================================
+     Cards
+     ================================ */
+  
+  .card{
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--panel) 88%, black 0%) 0%, color-mix(in oklab, var(--panel-2) 100%, black 0%) 100%);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding:16px 18px;
+  }
+  
+  .card__header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  
+  .card__title{
+    font-size:22px;
+    line-height:1.2;
+    margin:0;
+  }
+  
+  .card__footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:12px;
+  }
+  
+  /* ================================
+     Controls (more compact)
+     ================================ */
+  
+  .controls-card{ padding:14px 16px; }
+  .controls-card .ff-slider{ grid-template-columns:160px 1fr; gap:10px; }
+  .controls-card .ff-range{ height:10px; }
+  
+  /* ================================
+     Presets Bar
+     ================================ */
+  
+  .presets-card{ padding:14px 16px; }
+  
+  .presets-bar{
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .field{ display: grid; }
+  .field.grow{ min-width: 180px; }
+  
+  .toggle-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 12px;
+    color: var(--text);
+    user-select: none;
+  }
+  .toggle-chip input{ accent-color: var(--accent); }
+  
+  @media (max-width: 620px){
+    .presets-bar{ grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
+    .field.grow{ grid-column: 1 / -1; }
+  }
+  
+  /* ================================
+     Track Card (switch behaviour)
+     ================================ */
+  
+  .track-card{ cursor:pointer; user-select:none; transition: border-color .15s ease, box-shadow .15s ease, background .2s ease; }
+  .track-card:focus-visible{ outline: var(--focus-ring) solid var(--focus); outline-offset:4px; }
+  .track-card:hover{ border-color: var(--border-strong); }
+  
+  .track-card.is-on{
+    border-color: color-mix(in oklab, var(--active-icon) 38%, white 0%);
+    box-shadow: 0 16px 45px color-mix(in oklab, var(--active-icon) 20%, transparent), var(--shadow-card);
+  }
+  
+  .track-hero{ min-height:32px; }
+  
+  /* PNG icon via mask so it inherits currentColor */
+  .track-icon-img{
+    width:28px; height:28px; flex:0 0 auto;
+    background-color: var(--muted);
+    display:inline-block;
+    -webkit-mask-repeat:no-repeat;
+    -webkit-mask-position:center;
+    -webkit-mask-size:contain;
+    mask-repeat:no-repeat;
+    mask-position:center;
+    mask-size:contain;
+    transition: transform .18s ease, background-color .18s ease, opacity .18s ease;
+  }
+  .track-card.is-on .track-icon-img{
+    background-color: var(--active-icon);
+    transform: scale(1.06);
+  }
+  
+  /* If any SVG icons are still used, keep them themed too */
+  .track-icon{ color: var(--muted); }
+  .track-card.is-on .track-icon{ color: var(--active-icon); }
+  
+  /* Keyboard tag */
+  .kbd{
+    font:600 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    color:var(--muted-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:6px 8px;
+  }
+  
+  /* ================================
+     Sliders (range inputs)
+     ================================ */
+  
+  /* React sets --val (0..1). We paint the track using a split gradient. */
+  .ff-slider{
+    display:grid;
+    grid-template-columns:120px 1fr;
+    align-items:center;
+    gap:12px;
+    margin:10px 0 6px;
+  }
+  
+  .slider__label{
+    color:var(--muted);
+    font-weight:600;
+    letter-spacing:.2px;
+  }
+  
+  .ff-range{
+    --val: 0;
+    -webkit-appearance:none; appearance:none;
+    width:100%;
+    height:12px;                 /* touch-friendly track */
+    border-radius:999px;
+    background:
+      linear-gradient(to right,
+        var(--accent) 0 calc(var(--val) * 100%),
+        var(--track) calc(var(--val) * 100%) 100%);
+    outline:none;
+    transition: background .06s linear;
+  }
+  .ff-range:focus-visible{ outline: var(--focus-ring) solid var(--focus); outline-offset:4px; }
+  
+  /* WebKit */
+  .ff-range::-webkit-slider-runnable-track{
+    height:12px; background:transparent; border-radius:999px;
+  }
+  .ff-range::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:22px; height:22px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,.08);
+    background: var(--thumb);
+    box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    margin-top:-5px; /* center on 12px track */
+    cursor:grab;
+  }
+  .ff-range:active::-webkit-slider-thumb{ cursor:grabbing; }
+  
+  /* Firefox */
+  .ff-range::-moz-range-track{
+    height:12px; background:transparent; border-radius:999px;
+  }
+  .ff-range::-moz-range-progress{
+    height:12px; background: var(--accent); border-radius:999px 0 0 999px;
+  }
+  .ff-range::-moz-range-thumb{
+    width:22px; height:22px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,.08);
+    background: var(--thumb);
+    box-shadow: 0 2px 10px rgba(0,0,0,.25);
+  }
+  
+  /* Disabled slider */
+  .ff-range:disabled{ filter: grayscale(.35) opacity(.6); cursor:not-allowed; }
+  
+  /* ================================
+     Status Bar (high contrast)
+     ================================ */
+  
+  /* Support both class names (StatusBar.tsx uses "statusbar") */
+  .status-bar,
+  .statusbar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    color: var(--status);
+    font-size:13px;
+    padding:8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--panel) 72%, transparent);
+    backdrop-filter: saturate(1.1) blur(6px);
+    box-shadow: 0 6px 22px rgba(0,0,0,.18);
+  }
+  
+  /* ================================
+     Forms (misc)
+     ================================ */
+  
+  select.btn{
+    padding:8px 12px;
+    border-radius:12px;
+    background:transparent;
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  select.btn:focus-visible{ outline: var(--focus-ring) solid var(--focus); outline-offset:3px; }
+  
+  /* ================================
+     Reduced motion
+     ================================ */
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:.001ms !important; animation-duration:.001ms !important; }
+  }
+  
+  /* ================================
+     Small screens
+     ================================ */
+  @media (max-width: 620px){
+    .ff-slider{ grid-template-columns:1fr; gap:8px; }
+    .grid{ grid-template-columns:1fr; }
+  }
+  
+  /* ---------- HERO ---------- */
+  :root{
+    --hero-accent-1:#6d5ef5;
+    --hero-accent-2:#59d0ff;
+    --hero-ink:#0f1320;
+    --hero-eye:#eef6ff;
+    --hero-wire:#aab7d4;
+    --hero-pad:#d7def0;
+    --hero-book:#121a2f;
+  }
+  [data-theme="light"]{
+    --hero-ink:#0e1526;
+    --hero-eye:#0e1526;
+    --hero-wire:#7d8bb0;
+    --hero-pad:#e9eefb;
+    --hero-book:#10182c;
+  }
+  
+  .hero{
+    position: relative;
+    padding: 64px 16px 40px;
+  }
+  .hero__inner{
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+    gap: 18px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero__logo{ filter: drop-shadow(0 10px 30px rgba(0,0,0,.25)); }
+  .hero__title{
+    font-size: clamp(36px, 7vw, 56px);
+    line-height: 1.05;
+    margin: 0;
+    text-shadow: 0 10px 30px rgba(2,6,23,.25);
+  }
+  .hero__subtitle{
+    margin: 8px 0 14px;
+    color: var(--muted-2);
+    font-size: clamp(16px, 2.8vw, 20px);
+  }
+  .hero__cta{ display: flex; gap: 10px; flex-wrap: wrap; }
+  
+  @media (max-width: 620px){
+    .hero__inner{ grid-template-columns: 1fr; text-align: center; }
+    .hero__cta{ justify-content: center; }
+  }
+  
+  /* ---------- MIXER SECTION ---------- */
+  .mixer{ position: relative; z-index: 1; }
+  
+  /* ---------- WATERLINE ---------- */
+  .waterline{
+    position: relative;
+    height: 140px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .wave{
+    position: absolute;
+    left: -25%;
+    width: 150%;
+    height: 120px;
+    background:
+      radial-gradient(120px 40px at 10% 50%, color-mix(in oklab, var(--accent) 25%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 40% 50%, color-mix(in oklab, var(--accent-2) 25%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 70% 50%, color-mix(in oklab, var(--accent) 25%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 100% 50%, color-mix(in oklab, var(--accent-2) 25%, transparent), transparent 60%);
+    opacity: .35;
+    animation: wave-pan 22s linear infinite;
+    transform: translateZ(0);
+  }
+  .wave--back{ bottom: 0; filter: blur(6px); }
+  .wave--front{ bottom: -6px; opacity: .5; animation-duration: 16s; }
+  
+  .reflection{
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(255,255,255,.08), transparent 70%);
+    mix-blend-mode: screen;
+    opacity: .3;
+  }
+  
+  @keyframes wave-pan{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-20%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wave{ animation: none; }
+  }
+  
+  /* Floating theme select (top-right) */
+  .theme-select{
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    z-index: 2;
+  }
+  .theme-select .ff-select{ height: 36px; }
+  
+  /* Logo tokens (default = dark) */
+  :root{
+    --logo-halo-1:#95a6ff;
+    --logo-halo-2:#59d0ff;
+    --logo-moon:#e7f0ff;
+    --logo-band:#b8c2e2;
+    --logo-pad:#e9eefb;
+    --logo-book:#0f162a;
+    --logo-dot:#59d0ff;
+  }
+  [data-theme="neon-dark"]{
+    --logo-halo-1:#a1b6ff; --logo-halo-2:#6bd7ff;
+    --logo-moon:#f0f6ff;   --logo-band:#c4cdeb; --logo-pad:#eff3ff;
+    --logo-book:#10182c;   --logo-dot:#6aa9ff;
+  }
+  [data-theme="light"]{
+    --logo-halo-1:#a5b4fc; --logo-halo-2:#93c5fd;
+    --logo-moon:#0f162a;   --logo-band:#7d8bb0; --logo-pad:#e9eefb;
+    --logo-book:#10182c;   --logo-dot:#4338ca;
+  /* --- Light-Warm: full page sunset background & panel lift --- */
+  html[data-theme="light-warm"],
+  html[data-theme="light-warm"] body{
+    background: linear-gradient(180deg, #fff2d9 0%, #fde7b0 34%, #fdce7a 66%, #fbb457 100%) !important;
+  }
+
+  html[data-theme="light-warm"] .card{
+    background: linear-gradient(180deg, #ffffff 0%, #fff8ea 100%);
+    border-color: rgba(106,82,51,.22);
+    box-shadow: 0 18px 55px rgba(106,82,51,.18);
+  }
+
+  html[data-theme="light-warm"] .btn{
+    box-shadow: 0 10px 28px rgba(247,161,46,.35);
+  }
+
+  html[data-theme="light-warm"] .wave{
+    background:
+      radial-gradient(120px 40px at 10% 50%, color-mix(in oklab, #7c3aed 32%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 40% 50%, color-mix(in oklab, #f59e0b 34%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 70% 50%, color-mix(in oklab, #7c3aed 32%, transparent), transparent 60%),
+      radial-gradient(120px 40px at 100% 50%, color-mix(in oklab, #f59e0b 34%, transparent), transparent 60%);
+  }
+    }
