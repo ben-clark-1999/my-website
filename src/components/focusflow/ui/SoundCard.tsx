@@ -1,7 +1,9 @@
-// SoundCard.tsx
-import React, { useEffect, useMemo, useState } from 'react';
-import type { TrackMeta, TrackState } from '../../shared/types';
-import { ICONS } from './icons';
+// src/components/focusflow/ui/SoundCard.tsx
+"use client";
+
+import React, { useEffect, useMemo, useState } from "react";
+import type { TrackMeta, TrackState } from "../shared/types";
+import { ICONS } from "./icons";
 
 type Props = {
   meta: TrackMeta;
@@ -12,7 +14,8 @@ type Props = {
 };
 
 export default function SoundCard({ meta, state, onToggle, onVolume, getRemaining }: Props) {
-  const [/*remaining*/, setRemaining] = useState<number | null>(null);
+  const [, setRemaining] = useState<number | null>(null);
+
   useEffect(() => {
     const iv = setInterval(() => setRemaining(getRemaining()), 600);
     return () => clearInterval(iv);
@@ -20,26 +23,31 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
 
   const img = ICONS[meta.id as keyof typeof ICONS];
 
-  // If CSS masks aren’t supported (or fail), fall back to a tinted <img>
   const supportsMask = useMemo(() => {
     try {
-      return CSS.supports('mask-image', 'url("")') || CSS.supports('-webkit-mask-image', 'url("")');
-    } catch { return false; }
+      return (
+        CSS.supports("mask-image", 'url("")') ||
+        CSS.supports("-webkit-mask-image", 'url("")')
+      );
+    } catch {
+      return false;
+    }
   }, []);
 
   return (
     <section
-      className={`card track-card ${state.enabled ? 'is-on' : ''}`}
+      className={`card track-card ${state.enabled ? "is-on" : ""}`}
       tabIndex={0}
       role="switch"
       aria-checked={state.enabled}
       aria-label={`${meta.name} sound`}
       onClick={(e) => {
+        // don’t toggle if clicking the slider
         if ((e.target as HTMLElement).closest('input[type="range"]')) return;
         onToggle(!state.enabled);
       }}
       onKeyDown={(e) => {
-        if (e.key === ' ' || e.key === 'Enter') {
+        if (e.key === " " || e.key === "Enter") {
           e.preventDefault();
           onToggle(!state.enabled);
         }
@@ -53,6 +61,9 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
             style={{
               WebkitMaskImage: `url(${img})`,
               maskImage: `url(${img})`,
+              // optional: set an explicit size if your CSS doesn’t
+              width: 28,
+              height: 28,
             }}
             aria-hidden="true"
           />
@@ -62,11 +73,11 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
             src={img}
             alt=""
             aria-hidden="true"
+            width={28}
+            height={28}
             style={{
-              width: 28,
-              height: 28,
-              objectFit: 'contain',
-              filter: 'brightness(0) invert(1)', // looks good on dark; see light tweaks below
+              objectFit: "contain",
+              filter: "brightness(0) invert(1)", // nice on dark; adjust in light theme if needed
             }}
           />
         )}
@@ -83,7 +94,7 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
           max={1}
           step={0.01}
           value={state.volume}
-          style={{ ['--val' as any]: state.volume }}
+          style={{ ["--val" as any]: state.volume }}
           onInput={(e) => onVolume(Number((e.target as HTMLInputElement).value))}
           onChange={(e) => onVolume(Number((e.target as HTMLInputElement).value))}
           aria-label={`${meta.name} volume`}

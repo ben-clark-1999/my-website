@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import type { Preset } from '../../shared/types';
+import type { Preset } from '../shared/types';
 
 export default function PresetsBar({
   presets,

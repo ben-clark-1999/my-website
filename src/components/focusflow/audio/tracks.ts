@@ -1,5 +1,5 @@
-// src/renderer/audio/tracks.ts
-import type { TrackMeta } from '../../../../../FocusFlow copy/src/shared/types';
+// src/components/focusflow/audio/tracks.ts
+import type { TrackMeta } from "../shared/types";
 
 export const TRACKS: TrackMeta[] = [
   { id: 'rain',    name: 'Rain',    fileName: 'rain.wav',    icon: 'rain',    defaultVolume: 0.9, key: '1' },
