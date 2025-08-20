@@ -1,63 +1,56 @@
 "use client";
-import { motion } from "framer-motion";
-import VoiceAnimation from "@/components/ui/VoiceAnimation";
-import Link from "next/link";
 
-const projects = [
+import { motion } from "framer-motion";
+import Link from "next/link";
+import VoiceAnimation from "@/components/ui/VoiceAnimation";
+
+// 👇 Only FocusFlow gets this animation
+import MeditatingBrain from "@/assets/icons/MeditatingBrain.json";
+
+type Project = {
+  title: string;
+  href: string;
+  description: string;
+  // optional Lottie JSON for the card’s icon
+  animationData?: object;
+};
+
+const projects: Project[] = [
   {
     title: "AF Chatbot",
     href: "/projects/af-chatbot",
     description: "Conversational AI assistant for Anytime Fitness.",
-    emoji: "🤖",
+    // no animationData -> VoiceAnimation uses its default (voice-assistant.json)
   },
   {
     title: "FocusFlow",
     href: "/projects/focusflow",
     description: "Electron + React ambient sound mixer with presets.",
-    emoji: "🎧",
+    animationData: MeditatingBrain, // 👈 this is the brain animation
   },
 ];
-
 
 export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col items-center overflow-x-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-[#0c0c10] dark:via-[#0c0c10] dark:to-black px-4 py-24 sm:px-6 lg:px-8">
 
       {/* 🟣 Purple blob drifting diagonally */}
-        <motion.div
-          initial={{ opacity: 0.4 }}
-          animate={{
-            x: ["0%", "-10%", "0%"],
-            y: ["0%", "10%", "0%"],
-          }}
-          transition={{
-            repeat: Infinity,
-            repeatType: "loop",
-            duration: 20,
-            ease: "easeInOut",
-          }}
-          className="pointer-events-none absolute left-[10%] top-[-120px] h-96 w-96 rounded-full bg-purple-400 blur-3xl dark:bg-purple-700 opacity-40"
-        />
+      <motion.div
+        initial={{ opacity: 0.4 }}
+        animate={{ x: ["0%", "-10%", "0%"], y: ["0%", "10%", "0%"] }}
+        transition={{ repeat: Infinity, repeatType: "loop", duration: 20, ease: "easeInOut" }}
+        className="pointer-events-none absolute left-[10%] -top-32 h-96 w-96 rounded-full bg-purple-400 blur-3xl dark:bg-purple-700 opacity-40"
+      />
 
-        {/* 🔵 Blue blob drifting diagonally */}
-        <motion.div
-          initial={{ opacity: 0.4 }}
-          animate={{
-            x: ["0%", "10%", "0%"],
-            y: ["0%", "-10%", "0%"],
-          }}
-          transition={{
-            repeat: Infinity,
-            repeatType: "loop",
-            duration: 20,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-          className="pointer-events-none absolute right-[-120px] top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600 opacity-40"
-        />
+      {/* 🔵 Blue blob drifting diagonally */}
+      <motion.div
+        initial={{ opacity: 0.4 }}
+        animate={{ x: ["0%", "10%", "0%"], y: ["0%", "-10%", "0%"] }}
+        transition={{ repeat: Infinity, repeatType: "loop", duration: 20, ease: "easeInOut", delay: 2 }}
+        className="pointer-events-none absolute -right-32 top-[20%] h-96 w-96 rounded-full bg-blue-400 blur-3xl dark:bg-blue-600 opacity-40"
+      />
 
-
-      {/* Hero Section */}
+      {/* Hero */}
       <motion.header
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -66,15 +59,15 @@ export default function Home() {
       >
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
           <span className="bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
-            Benjamin Clark reeee
+            Benjamin Clark
           </span>
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-          Software developer specialising in&nbsp;
+          Software developer specialising in{" "}
           <span className="font-semibold text-zinc-800 dark:text-zinc-100">
             AI, automation & meaningful digital products
           </span>
-          . I enjoy turning complex problems into elegant, user‑centric solutions.
+          . I enjoy turning complex problems into elegant, user-centric solutions.
         </p>
         <div className="mt-6 flex justify-center gap-4">
           <a
@@ -101,23 +94,13 @@ export default function Home() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: false, amount: 0.2 }}
-        variants={{
-          hidden: {},
-          show: {
-            transition: {
-              staggerChildren: 0.2,
-            },
-          },
-        }}
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.2 } } }}
         className="z-10 grid w-full max-w-4xl auto-rows-fr gap-8 sm:grid-cols-2 md:grid-cols-3"
       >
         {projects.map((proj, idx) => (
           <motion.div
             key={proj.title}
-            variants={{
-              hidden: { opacity: 0, y: 100 },
-              show: { opacity: 1, y: 0, rotateX: 0 },
-            }}
+            variants={{ hidden: { opacity: 0, y: 100 }, show: { opacity: 1, y: 0 } }}
             transition={{ duration: 0.7, ease: "easeOut", delay: idx * 0.1 }}
             className="rounded-2xl transition-all duration-500 hover:scale-[1.015] hover:rotate-[-1deg] border border-zinc-200 bg-white/60 p-6 shadow-lg backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/60"
           >
@@ -129,7 +112,8 @@ export default function Home() {
             >
               <div className="relative h-24 w-24 flex items-center justify-center">
                 <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-20" />
-                <VoiceAnimation className="relative z-10 h-20 w-20" />
+                {/* 👇 Pass per-project animation (FocusFlow gets MeditatingBrain) */}
+                <VoiceAnimation animationData={proj.animationData} className="relative z-10 h-24 w-24" />
               </div>
             </motion.div>
 
@@ -137,19 +121,18 @@ export default function Home() {
               {proj.title}
             </h3>
             <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">{proj.description}</p>
-            <a
+
+            {/* Internal links should use <Link> */}
+            <Link
               href={proj.href}
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-block w-full rounded bg-gradient-to-br from-purple-600 to-indigo-600 px-4 py-2 text-center font-semibold text-white hover:opacity-90 transition"
             >
               View Project
-            </a>
+            </Link>
           </motion.div>
         ))}
       </motion.section>
 
-      {/* Footer */}
       <footer className="z-10 mt-24 text-sm text-zinc-500 dark:text-zinc-600">
         © {new Date().getFullYear()} Benjamin Clark • Built with Next.js & Tailwind CSS
       </footer>

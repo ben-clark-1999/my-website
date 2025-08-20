@@ -1,6 +1,7 @@
 ./
     .DS_Store
     .env.local
+    .gitattributes
     .gitignore
     README.md
     components.json
@@ -49,10 +50,22 @@ src/
             af-chatbot/
                 page.tsx
             focusflow/
+                ClientFocusFlow.tsx
                 page.tsx
     assets/
         animations/
             voice-assistant.json
+        icons/
+            Meditating Brain.json
+            bird.png
+            cafe.png
+            fire.png
+            night.png
+            ocean.png
+            rain.png
+            river.png
+            thunder.png
+            wind.png
     components/
         af-chatbot/
             Chat.tsx

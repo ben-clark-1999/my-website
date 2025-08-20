@@ -8,7 +8,6 @@ import PresetsBar from "./ui/PresetsBar";
 import StatusBar from "./ui/StatusBar";
 import AmbientDecor from "./ui/AmbientDecor";
 import Hero from "./ui/Hero";
-import Waterline from "./ui/Waterline";
 import { TRACKS } from "./audio/tracks";
 
 /* ---------- local types (simplified) ---------- */
@@ -27,6 +26,39 @@ type AppState = {
   presets: Preset[];
 };
 
+/* ---------- helpers ---------- */
+function remapId(id: string) {
+  if (id === "brown" || id === "birds") return "bird";
+  return id;
+}
+
+/** Make a preset from a { id: volume } map; anything missing is off at default volume */
+function makePreset(
+  name: string,
+  vols: Record<string, number>,
+  master: number = 0.8,
+  crossfade: number = 0.8
+): Preset {
+  const tracks: TrackState[] = TRACKS.map(t => {
+    const want = vols[remapId(t.id)];
+    return {
+      id: t.id,
+      enabled: typeof want === "number",
+      volume: typeof want === "number" ? want : t.defaultVolume,
+    };
+  });
+  return { name, masterVolume: master, crossfadeSec: crossfade, tracks };
+}
+
+/* ---------- built-in presets (shown when none saved) ---------- */
+const BUILTIN_PRESETS: Preset[] = [
+  makePreset("Rainy Focus", { rain: 0.7, wind: 0.25 }),
+  makePreset("Café Study", { cafe: 0.65, rain: 0.25 }),
+  makePreset("Forest Birds", { bird: 0.6, wind: 0.25 }),
+  makePreset("Campfire Night", { fire: 0.6, night: 0.35, wind: 0.2 }),
+  makePreset("Ocean Breeze", { ocean: 0.6, wind: 0.3 }),
+];
+
 /* ---------- defaults ---------- */
 const DEFAULT_STATE: AppState = {
   masterVolume: 0.8,
@@ -37,7 +69,7 @@ const DEFAULT_STATE: AppState = {
     enabled: false,
     volume: t.defaultVolume,
   })),
-  presets: [],
+  presets: BUILTIN_PRESETS,
 };
 
 /* ---------- electron bridge (web: do-nothing stubs) ---------- */
@@ -51,34 +83,25 @@ declare global {
   }
 }
 
-/* Resolve from Next's /public */
-const loopUrl = (fileName: string) => `/loops/${fileName}`;
-
-/* Legacy id remap (optional) */
-function remapId(id: string) {
-  if (id === "brown") return "bird";
-  return id;
-}
+/* Serve from /public (your .wav are in the root of /public) */
+const loopUrl = (fileName: string) => `/${fileName}`;
 
 /* ---------- app ---------- */
 export default function App() {
-  // NOTE: we run in “web-only” mode; no AudioEngine, just HTMLAudio
+  // web-only mode; HTMLAudio
   const htmlAudioRef = useRef<Record<string, HTMLAudioElement>>({});
+  const initializedRef = useRef(false);
   const [state, setState] = useState<AppState>(DEFAULT_STATE);
   type ThemeKey = "dark" | "neon-dark" | "light" | "light-warm";
   const [theme, setTheme] = useState<ThemeKey>("dark");
-  const [cpu, setCpu] = useState(0); // cosmetic only
+  const [cpu, setCpu] = useState(0);
   const didBindResume = useRef(false);
 
-  const trackIndex = useMemo(() => {
-    const map = new Map<string, number>();
-    state.tracks.forEach((t, i) => map.set(t.id, i));
-    return map;
-  }, [state.tracks]);
-
-  /* bootstrap */
   useEffect(() => {
-    // Prepare HTMLAudio elements
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    // Prepare HTMLAudio
     const fallbackEls: Record<string, HTMLAudioElement> = {};
     for (const t of TRACKS) {
       const el = new Audio(loopUrl(t.fileName));
@@ -94,7 +117,6 @@ export default function App() {
       const loaded = (await window.FocusFlowAPI?.loadState?.()) ?? DEFAULT_STATE;
       if (cancelled) return;
 
-      // Theme safety (no “system”)
       const loadedTheme = (loaded as any).theme as ThemeKey;
       setTheme(
         loadedTheme === "dark" ||
@@ -105,28 +127,31 @@ export default function App() {
           : "dark"
       );
 
-      // Normalize tracks & presets
+      // Normalize tracks & presets; if none saved, use built-ins
+      const normalizedPresets =
+        Array.isArray(loaded.presets) && loaded.presets.length
+          ? loaded.presets.map((p) => ({
+              ...p,
+              tracks: p.tracks.map((tr) => ({ ...tr, id: remapId(tr.id) })),
+            }))
+          : BUILTIN_PRESETS;
+
       const cleared: AppState = {
         ...loaded,
         tracks: TRACKS.map((t) => {
-          const prev = loaded.tracks.find((x) => remapId(x.id) === t.id);
+          const prev = loaded.tracks?.find((x) => remapId(x.id) === t.id);
           return {
             id: t.id,
             enabled: false,
             volume: prev ? prev.volume : t.defaultVolume,
           };
         }),
-        presets: Array.isArray(loaded.presets)
-          ? loaded.presets.map((p: Preset) => ({
-              ...p,
-              tracks: p.tracks.map((tr) => ({ ...tr, id: remapId(tr.id) })),
-            }))
-          : [],
+        presets: normalizedPresets,
       };
 
       setState(cleared);
 
-      // Reset audio to OFF
+      // ensure all OFF
       Object.values(htmlAudioRef.current).forEach((a) => {
         try {
           a.pause();
@@ -135,9 +160,7 @@ export default function App() {
       });
     })();
 
-    // Cosmetic CPU ticker (just keep your StatusBar UI happy)
     const iv = window.setInterval(() => setCpu((c) => (c + 7) % 100), 1000);
-
     return () => {
       window.clearInterval(iv);
       Object.values(htmlAudioRef.current).forEach((a) => {
@@ -148,12 +171,10 @@ export default function App() {
     };
   }, []);
 
-  /* resume on first gesture (mobile autoplay rules) */
   useEffect(() => {
     if (didBindResume.current) return;
     didBindResume.current = true;
     const resumeAll = () => {
-      // HTMLAudio resumes on demand when .play() is called
       window.removeEventListener("pointerdown", resumeAll);
       window.removeEventListener("keydown", resumeAll);
     };
@@ -161,12 +182,10 @@ export default function App() {
     window.addEventListener("keydown", resumeAll, { once: true });
   }, []);
 
-  /* theming (no “system”: set attribute directly) */
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
-  /* ------- engine helpers (HTMLAudio only) ------- */
   function commitTrackToAudio(id: string, enabled: boolean, volume: number) {
     const a = htmlAudioRef.current[id];
     if (!a) return;
@@ -180,14 +199,6 @@ export default function App() {
     }
   }
 
-  function commitAppStateToAudio(next: AppState) {
-    for (const t of next.tracks) {
-      const a = htmlAudioRef.current[t.id];
-      if (a) a.volume = clamp01(t.volume * next.masterVolume);
-    }
-  }
-
-  /* UI actions */
   function setTrackState(id: string, enabled: boolean, volume: number) {
     setState((prev) => ({
       ...prev,
@@ -197,6 +208,7 @@ export default function App() {
     }));
     queueMicrotask(() => commitTrackToAudio(id, enabled, volume));
   }
+
   function toggleTrack(id: string) {
     let nextEnabled = false,
       vol = 0;
@@ -212,6 +224,7 @@ export default function App() {
     });
     queueMicrotask(() => commitTrackToAudio(id, nextEnabled, vol));
   }
+
   function setMasterVolume(v: number) {
     setState((prev) => ({ ...prev, masterVolume: v }));
     queueMicrotask(() => {
@@ -221,6 +234,7 @@ export default function App() {
       }
     });
   }
+
   function setCrossfade(v: number) {
     setState((prev) => ({ ...prev, crossfadeSec: v }));
   }
@@ -312,7 +326,6 @@ export default function App() {
     window.FocusFlowAPI?.saveState?.(snap);
   }
 
-  /* shortcuts (1..N toggles tracks) */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat) return;
@@ -339,16 +352,12 @@ export default function App() {
 
   return (
     <div className="app">
-      <AmbientDecor />
+      <AmbientDecor /> {/* decorative background mesh; low-cost, theme-aware :contentReference[oaicite:1]{index=1} */}
+      <Hero onStart={scrollToMixer} /> {/* hero layout with brain on the right :contentReference[oaicite:2]{index=2} */}
 
-      {/* HERO */}
-      <Hero onStart={scrollToMixer} />
-
-      {/* Theme */}
+      {/* Theme select (top-right) */}
       <div className="theme-select">
-        <label htmlFor="theme" className="visually-hidden">
-          Theme
-        </label>
+        <label htmlFor="theme" className="visually-hidden">Theme</label>
         <select
           id="theme"
           className="ff-select"
@@ -356,9 +365,9 @@ export default function App() {
           onChange={(e) => setTheme(e.target.value as ThemeKey)}
           aria-label="Theme"
         >
+          <option value="light">Light</option>
           <option value="dark">Dark</option>
           <option value="neon-dark">Neon Dark</option>
-          <option value="light">Light</option>
           <option value="light-warm">Light – Warm</option>
         </select>
       </div>
@@ -373,14 +382,14 @@ export default function App() {
           onPlayPauseAll={onPlayPauseAll}
           onStopAll={onStopAll}
           onSave={onSaveSession}
-        />
+        /> {/* :contentReference[oaicite:3]{index=3} */}
 
         <PresetsBar
           presets={state.presets}
           onSave={savePreset}
           onLoad={loadPreset}
           onDelete={deletePreset}
-        />
+        /> {/* renders options from props.presets :contentReference[oaicite:4]{index=4} */}
 
         <main className="grid">
           {withState.map(({ meta, ts }) => (
@@ -396,8 +405,7 @@ export default function App() {
         </main>
       </section>
 
-      <Waterline />
-      <StatusBar cpu={cpu} lastSaved={state.lastSaved} />
+      <StatusBar cpu={cpu} lastSaved={state.lastSaved} /> {/* :contentReference[oaicite:5]{index=5} */}
     </div>
   );
 }

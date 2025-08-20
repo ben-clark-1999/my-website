@@ -1,63 +1,54 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import Lottie, { LottieRefCurrentProps } from 'lottie-react';
+"use client";
 
-// Path from src/renderer/ui/Hero.tsx → project root /assets/icons/…
-import meditatingBrain from '../../../assets/icons/Meditating Brain.json';
+import React, { useEffect, useState } from "react";
+import Lottie from "lottie-react";
+import meditatingBrain from "@/assets/icons/MeditatingBrain.json";
 
 type Props = { onStart: () => void };
 
 export default function Hero({ onStart }: Props) {
-  const lottieRef = useRef<LottieRefCurrentProps>(null);
+  const [shouldAnimate, setShouldAnimate] = useState(true);
 
-  // Respect reduced motion so the logo doesn't animate if users prefer it off
-  const prefersReducedMotion = useMemo(
-    () => window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false,
-    []
-  );
-
-  // Nudge animation speed based on theme to give each mode a subtle feel
   useEffect(() => {
-    const theme = document.documentElement.getAttribute('data-theme');
-    const speed =
-      theme === 'neon-dark' ? 0.8 :
-      theme === 'light-warm' ? 0.9 :
-      1;
-    try { lottieRef.current?.setSpeed(speed); } catch {}
+    if (typeof window !== "undefined" && "matchMedia" in window) {
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setShouldAnimate(!prefersReduced);
+    }
   }, []);
 
-  // If you cannot enable `resolveJsonModule`, use this fetch approach instead:
-  // const [anim, setAnim] = React.useState<any>(null);
-  // useEffect(() => {
-  //   fetch(new URL('../../../assets/icons/Meditating Brain.json', import.meta.url))
-  //     .then(r => r.json())
-  //     .then(setAnim)
-  //     .catch(()=>{});
-  // }, []);
-
   return (
-    <section className="hero" aria-labelledby="hero-title">
-      <div className="hero__inner">
-        {/* Animated logo */}
-        <div className="hero__logo" aria-hidden="true" style={{ width: 120, height: 120 }}>
-          <Lottie
-            lottieRef={lottieRef}
-            animationData={meditatingBrain /* or anim if using fetch */}
-            autoplay={!prefersReducedMotion}
-            loop={!prefersReducedMotion}
-            style={{ width: 120, height: 120 }}
-            rendererSettings={{ preserveAspectRatio: 'xMidYMid meet', progressiveLoad: true }}
-          />
-        </div>
-
-        <div className="hero__text">
-          <h1 id="hero-title" className="hero__title">FocusFlow</h1>
-          <p className="hero__subtitle">
+    <section
+      aria-labelledby="hero-title"
+      className="hero w-full mt-0 mb-0 py-0"
+    >
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* Left: Title, tagline, buttons */}
+        <div className="flex-1">
+          <h1 id="hero-title" className="m-0 text-5xl md:text-6xl font-extrabold leading-tight">
+            FocusFlow
+          </h1>
+          <p className="mt-3 text-lg text-muted-foreground">
             Create immersive soundscapes for study, sleep, and deep focus.
           </p>
-          <div className="hero__cta">
-            <button className="btn" onClick={onStart}>Start mixing</button>
-            <a className="btn ghost" href="#mixer">Browse sounds</a>
+          <div className="mt-4 flex items-center gap-3">
+            <button
+              onClick={onStart}
+              className="px-5 py-2 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 transition"
+            >
+              Start mixing
+            </button>
+            
           </div>
+        </div>
+
+        {/* Right: Brain */}
+        <div className="shrink-0 md:ml-8" aria-hidden="true" style={{ width: 120, height: 120 }}>
+          <Lottie
+            animationData={meditatingBrain}
+            autoplay={shouldAnimate}
+            loop={shouldAnimate}
+            style={{ width: "100%", height: "100%" }}
+          />
         </div>
       </div>
     </section>

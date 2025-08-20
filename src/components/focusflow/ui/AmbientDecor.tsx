@@ -1,4 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+"use client";
+
+import React, { useEffect, useRef } from "react";
 
 export default function AmbientDecor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -7,36 +9,45 @@ export default function AmbientDecor() {
 
   useEffect(() => {
     const canvas = canvasRef.current!;
-    const ctx = canvas.getContext('2d', { alpha: true })!;
-    const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+    const ctx = canvas.getContext("2d", { alpha: true })!;
+    const getDpr = () => Math.max(1, Math.floor(window.devicePixelRatio || 1));
 
-    let w = 0, h = 0;
-    let P: { x:number; y:number; vx:number; vy:number; }[] = [];
+    let w = 0, h = 0, dpr = getDpr();
+    let P: { x:number; y:number; vx:number; vy:number }[] = [];
+
     const cfg = { count: 36, speed: 0.06, link: 140 };
-
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (reduced) cfg.count = 20;
 
     const resize = () => {
-      const rect = document.documentElement.getBoundingClientRect();
-      w = Math.floor(rect.width * dpr);
-      h = Math.floor(rect.height * dpr);
-      canvas.width = w; canvas.height = h;
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
+      // Use the **viewport** size, not document size
+      const vw = Math.max(1, Math.floor(window.innerWidth));
+      const vh = Math.max(1, Math.floor(window.innerHeight));
+      dpr = getDpr();
+
+      w = vw * dpr;
+      h = vh * dpr;
+
+      canvas.width = w;
+      canvas.height = h;
+      canvas.style.width = `${vw}px`;
+      canvas.style.height = `${vh}px`;
+
       P = Array.from({ length: cfg.count }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
+        x: Math.random() * w,
+        y: Math.random() * h,
         vx: (Math.random() - 0.5) * cfg.speed * dpr,
-        vy: (Math.random() - 0.5) * cfg.speed * dpr
+        vy: (Math.random() - 0.5) * cfg.speed * dpr,
       }));
     };
 
     const step = () => {
       if (!runningRef.current) return;
+
       const s = getComputedStyle(document.documentElement);
-      const dot = s.getPropertyValue('--mesh-dot').trim();
-      const ln = s.getPropertyValue('--mesh-line').trim();
-      const fade = s.getPropertyValue('--mesh-fade').trim();
+      const dot = s.getPropertyValue("--mesh-dot").trim();
+      const ln = s.getPropertyValue("--mesh-line").trim();
+      const fade = s.getPropertyValue("--mesh-fade").trim();
 
       ctx.fillStyle = fade;
       ctx.fillRect(0, 0, w, h);
@@ -50,42 +61,59 @@ export default function AmbientDecor() {
       ctx.lineWidth = dpr;
       ctx.strokeStyle = ln;
       const thresh2 = Math.pow(cfg.link * dpr, 2);
-      for (let i=0; i<P.length; i++){
+
+      for (let i = 0; i < P.length; i++) {
         const a = P[i];
-        for (let j=i+1; j<P.length; j++){
+        for (let j = i + 1; j < P.length; j++) {
           const b = P[j];
-          const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+          const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
           if (d2 < thresh2) {
-            ctx.globalAlpha = (1 - d2/thresh2) * 0.35;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            ctx.globalAlpha = (1 - d2 / thresh2) * 0.35;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
           }
         }
       }
+
       ctx.globalAlpha = 1;
       ctx.fillStyle = dot;
-      for (const p of P){ ctx.beginPath(); ctx.arc(p.x, p.y, 1.3*dpr, 0, Math.PI*2); ctx.fill(); }
+      for (const p of P) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.3 * dpr, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       rafRef.current = requestAnimationFrame(step);
     };
 
     const onVis = () => {
-      runningRef.current = document.visibilityState === 'visible';
-      if (runningRef.current && rafRef.current === null) rafRef.current = requestAnimationFrame(step);
+      runningRef.current = document.visibilityState === "visible";
+      if (runningRef.current && rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(step);
+      }
     };
 
     resize();
-    ctx.fillStyle = 'transparent'; ctx.fillRect(0,0,w,h);
+    ctx.clearRect(0, 0, w, h);
     rafRef.current = requestAnimationFrame(step);
-    window.addEventListener('resize', resize);
-    document.addEventListener('visibilitychange', onVis);
+
+    window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", onVis);
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
-      window.removeEventListener('resize', resize);
-      document.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVis);
     };
   }, []);
 
-  return <canvas className="ambient-mesh" ref={canvasRef} aria-hidden="true" />;
+  // Fixed, non-interactive layer that never affects layout height
+  return (
+    <div className="ambient-layer" aria-hidden="true">
+      <canvas ref={canvasRef} />
+    </div>
+  );
 }

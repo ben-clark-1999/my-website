@@ -66,9 +66,7 @@ export default function MasterControls({
         <button className="btn" onClick={onPlayPauseAll}>
           Play / Pause All
         </button>
-        <button className="btn" onClick={onStopAll}>
-          Stop All
-        </button>
+        
         
       </div>
     </section>
