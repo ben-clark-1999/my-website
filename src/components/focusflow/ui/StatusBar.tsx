@@ -1,13 +1,14 @@
-import React from 'react';
+"use client";
 
-export default function StatusBar({ cpu, lastSaved }: { cpu: number, lastSaved: string | null }) {
-  const savedAt = lastSaved ? new Date(lastSaved) : null;
-  const hhmm = savedAt ? savedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+type Props = {
+  cpu?: number;
+  lastSaved?: string | null;
+};
+
+export default function StatusBar(_props: Props) {
   return (
-    <div className="statusbar" role="status">
-      <span>CPU: {cpu?.toFixed(1) ?? 0}%</span>
-      <span>Saved at: {hhmm}</span>
-      <span>Tips: Press 1–5 to toggle tracks</span>
-    </div>
+    <footer className="statusbar text-sm text-zinc-600 dark:text-zinc-400 py-3">
+      <span className="font-medium">Tips:</span> Press 1–9 to toggle tracks
+    </footer>
   );
 }
