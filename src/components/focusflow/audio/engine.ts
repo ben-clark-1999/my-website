@@ -1,4 +1,4 @@
-import type { TrackMeta, TrackState } from '../../../../../FocusFlow copy/src/shared/types';
+import type { TrackMeta, TrackState } from "../shared/types";
 
 type Player = {
   source: AudioBufferSourceNode | null;
@@ -46,7 +46,10 @@ export class AudioEngine {
   }
 
   async loadBuffer(id: string, fileAbsPath: string) {
-    const bytes = await window.FocusFlow.readFileArrayBuffer(fileAbsPath);
+    const api = (window as any).FocusFlowAPI;
+    const bytes: ArrayBuffer = api?.readFileArrayBuffer
+      ? await api.readFileArrayBuffer(fileAbsPath)
+      : await fetch(fileAbsPath).then(r => r.arrayBuffer());
     const buf = await this.ctx.decodeAudioData(bytes.slice(0) as ArrayBuffer);
     const p = this.players.get(id)!;
     p.buffer = buf;
