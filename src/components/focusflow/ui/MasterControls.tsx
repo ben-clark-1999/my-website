@@ -16,8 +16,8 @@ export default function MasterControls({
   onMaster,
   onCrossfade,
   onPlayPauseAll,
-  onStopAll,
-  onSave,
+  onStopAll,   // still available if you want to render a button later
+  onSave,      // still available if you want to render a button later
 }: Props) {
   return (
     <section className="card controls-card">
@@ -29,18 +29,15 @@ export default function MasterControls({
       <label className="ff-slider">
         <span className="slider__label">Master Volume</span>
         <input
-          className="ff-range"
+          className="ff-range touch-manipulation"
           type="range"
           min={0}
           max={1}
           step={0.01}
           value={masterVolume}
-          // Keep filled gradient in sync
           style={{ ['--val' as any]: masterVolume }}
-          // Live updates while dragging
-          onInput={(e) => onMaster(Number((e.target as HTMLInputElement).value))}
-          // Redundant: some browsers only fire change on mouseup
-          onChange={(e) => onMaster(Number((e.target as HTMLInputElement).value))}
+          onInput={(e) => onMaster((e.target as HTMLInputElement).valueAsNumber)}
+          onChange={(e) => onMaster((e.target as HTMLInputElement).valueAsNumber)}
           aria-label="Master volume"
         />
       </label>
@@ -49,15 +46,15 @@ export default function MasterControls({
       <label className="ff-slider">
         <span className="slider__label">Crossfade (seconds)</span>
         <input
-          className="ff-range"
+          className="ff-range touch-manipulation"
           type="range"
           min={0}
           max={2}
           step={0.1}
           value={crossfade}
           style={{ ['--val' as any]: crossfade / 2 }}
-          onInput={(e) => onCrossfade(Number((e.target as HTMLInputElement).value))}
-          onChange={(e) => onCrossfade(Number((e.target as HTMLInputElement).value))}
+          onInput={(e) => onCrossfade((e.target as HTMLInputElement).valueAsNumber)}
+          onChange={(e) => onCrossfade((e.target as HTMLInputElement).valueAsNumber)}
           aria-label="Crossfade duration"
         />
       </label>
@@ -66,8 +63,6 @@ export default function MasterControls({
         <button className="btn" onClick={onPlayPauseAll}>
           Play / Pause All
         </button>
-        
-        
       </div>
     </section>
   );

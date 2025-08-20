@@ -42,7 +42,6 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
       aria-checked={state.enabled}
       aria-label={`${meta.name} sound`}
       onClick={(e) => {
-        // don’t toggle if clicking the slider
         if ((e.target as HTMLElement).closest('input[type="range"]')) return;
         onToggle(!state.enabled);
       }}
@@ -55,30 +54,24 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
     >
       <header className="card__header track-hero">
         {supportsMask ? (
-          // Preferred: paint the PNG silhouette with currentColor
           <span
             className="track-icon-img"
             style={{
               WebkitMaskImage: `url(${img})`,
               maskImage: `url(${img})`,
-              // optional: set an explicit size if your CSS doesn’t
               width: 28,
               height: 28,
             }}
             aria-hidden="true"
           />
         ) : (
-          // Fallback: show the PNG and tint it
           <img
             src={img}
             alt=""
             aria-hidden="true"
             width={28}
             height={28}
-            style={{
-              objectFit: "contain",
-              filter: "brightness(0) invert(1)", // nice on dark; adjust in light theme if needed
-            }}
+            style={{ objectFit: "contain", filter: "brightness(0) invert(1)" }}
           />
         )}
 
@@ -88,15 +81,15 @@ export default function SoundCard({ meta, state, onToggle, onVolume, getRemainin
       <label className="ff-slider">
         <span className="slider__label">Volume</span>
         <input
-          className="ff-range"
+          className="ff-range touch-manipulation"
           type="range"
           min={0}
           max={1}
           step={0.01}
           value={state.volume}
           style={{ ["--val" as any]: state.volume }}
-          onInput={(e) => onVolume(Number((e.target as HTMLInputElement).value))}
-          onChange={(e) => onVolume(Number((e.target as HTMLInputElement).value))}
+          onInput={(e) => onVolume((e.target as HTMLInputElement).valueAsNumber)}
+          onChange={(e) => onVolume((e.target as HTMLInputElement).valueAsNumber)}
           aria-label={`${meta.name} volume`}
         />
       </label>
