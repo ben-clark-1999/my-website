@@ -39,7 +39,7 @@ function makePreset(
   master: number = 0.8,
   crossfade: number = 0.8
 ): Preset {
-  const tracks: TrackState[] = TRACKS.map(t => {
+  const tracks: TrackState[] = TRACKS.map((t) => {
     const want = vols[remapId(t.id)];
     return {
       id: t.id,
@@ -83,8 +83,14 @@ declare global {
   }
 }
 
-/* Serve from /public (your .wav are in the root of /public) */
-const loopUrl = (fileName: string) => `/${fileName}`;
+/* Prefer MP3 (small/streamable), fallback to WAV — both expected in /public */
+function pickSrc(fileName: string) {
+  const mp3 = "/" + fileName.replace(/\.\w+$/, ".mp3");
+  const wav = "/" + fileName.replace(/\.\w+$/, ".wav");
+  const probe = document.createElement("audio");
+  const canMp3 = !!probe.canPlayType && probe.canPlayType("audio/mpeg") !== "";
+  return canMp3 ? mp3 : wav;
+}
 
 /* ---------- app ---------- */
 export default function App() {
@@ -101,16 +107,22 @@ export default function App() {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
-    // Prepare HTMLAudio
-    const fallbackEls: Record<string, HTMLAudioElement> = {};
+    // Prepare HTMLAudio lazily (metadata only)
+    const els: Record<string, HTMLAudioElement> = {};
     for (const t of TRACKS) {
-      const el = new Audio(loopUrl(t.fileName));
+      const el = new Audio();
+      el.src = pickSrc(t.fileName);
       el.loop = true;
-      el.preload = "auto";
+      el.preload = "metadata";         // ← don’t pull whole file on mount
+      el.crossOrigin = "anonymous";
       el.volume = clamp01(DEFAULT_STATE.masterVolume * t.defaultVolume);
-      fallbackEls[t.id] = el;
+      el.addEventListener("error", () => {
+        // Helpful in prod if an asset path is wrong
+        console.error("Audio error", { id: t.id, src: el.src, error: el.error });
+      });
+      els[t.id] = el;
     }
-    htmlAudioRef.current = fallbackEls;
+    htmlAudioRef.current = els;
 
     let cancelled = false;
     (async () => {
@@ -171,6 +183,7 @@ export default function App() {
     };
   }, []);
 
+  // Resume gate (first gesture = safe to play)
   useEffect(() => {
     if (didBindResume.current) return;
     didBindResume.current = true;
@@ -186,12 +199,22 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // ------- playback helpers (HTMLAudio only) -------
   function commitTrackToAudio(id: string, enabled: boolean, volume: number) {
     const a = htmlAudioRef.current[id];
     if (!a) return;
+
     a.volume = clamp01(volume * state.masterVolume);
-    if (enabled) a.play().catch(() => {});
-    else {
+
+    if (enabled) {
+      // Ensure pipeline is primed on first toggle
+      if (a.readyState < 2 /* HAVE_CURRENT_DATA */) {
+        try { a.load(); } catch {}
+      }
+      a.play().catch((err) => {
+        console.warn(`Audio play failed for "${id}" →`, err);
+      });
+    } else {
       try {
         a.pause();
         a.currentTime = 0;
@@ -210,8 +233,7 @@ export default function App() {
   }
 
   function toggleTrack(id: string) {
-    let nextEnabled = false,
-      vol = 0;
+    let nextEnabled = false, vol = 0;
     setState((prev) => {
       const idx = prev.tracks.findIndex((t) => t.id === id);
       if (idx === -1) return prev;
@@ -263,8 +285,7 @@ export default function App() {
         const a = htmlAudioRef.current[t.id];
         if (a) a.volume = clamp01(t.volume * next.masterVolume);
       }
-      for (const t of nextTracks)
-        commitTrackToAudio(t.id, t.enabled, t.volume);
+      for (const t of nextTracks) commitTrackToAudio(t.id, t.enabled, t.volume);
     });
   }
 
@@ -289,37 +310,44 @@ export default function App() {
       return next;
     });
   }
+
   function loadPreset(name: string) {
     const p = state.presets.find((x) => x.name === name);
     if (p) applyPreset(p);
   }
+
   function deletePreset(name: string) {
     setState((prev) => ({
       ...prev,
       presets: prev.presets.filter((p) => p.name !== name),
     }));
   }
+
   function onPlayPauseAll() {
     const anyPlaying = Object.values(htmlAudioRef.current).some((a) => !a.paused);
-    if (anyPlaying)
+    if (anyPlaying) {
       Object.values(htmlAudioRef.current).forEach((a) => {
-        try {
-          a.pause();
-        } catch {}
+        try { a.pause(); } catch {}
       });
-    else
+    } else {
       state.tracks.forEach((t) => {
-        if (t.enabled) htmlAudioRef.current[t.id]?.play().catch(() => {});
+        if (t.enabled) {
+          const a = htmlAudioRef.current[t.id];
+          if (a && a.readyState < 2) { try { a.load(); } catch {} }
+          htmlAudioRef.current[t.id]?.play().catch((err) => {
+            console.warn(`Audio play failed for "${t.id}" →`, err);
+          });
+        }
       });
+    }
   }
+
   function onStopAll() {
     Object.values(htmlAudioRef.current).forEach((a) => {
-      try {
-        a.pause();
-        a.currentTime = 0;
-      } catch {}
+      try { a.pause(); a.currentTime = 0; } catch {}
     });
   }
+
   function onSaveSession() {
     const snap = { ...state, lastSaved: new Date().toISOString() };
     setState(snap);
@@ -352,8 +380,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <AmbientDecor /> {/* decorative background mesh; low-cost, theme-aware :contentReference[oaicite:1]{index=1} */}
-      <Hero onStart={scrollToMixer} /> {/* hero layout with brain on the right :contentReference[oaicite:2]{index=2} */}
+      <AmbientDecor />
+      <Hero onStart={scrollToMixer} />
 
       {/* Theme select (top-right) */}
       <div className="theme-select">
@@ -382,14 +410,14 @@ export default function App() {
           onPlayPauseAll={onPlayPauseAll}
           onStopAll={onStopAll}
           onSave={onSaveSession}
-        /> {/* :contentReference[oaicite:3]{index=3} */}
+        />
 
         <PresetsBar
           presets={state.presets}
           onSave={savePreset}
           onLoad={loadPreset}
           onDelete={deletePreset}
-        /> {/* renders options from props.presets :contentReference[oaicite:4]{index=4} */}
+        />
 
         <main className="grid">
           {withState.map(({ meta, ts }) => (
@@ -405,7 +433,7 @@ export default function App() {
         </main>
       </section>
 
-      <StatusBar cpu={cpu} lastSaved={state.lastSaved} /> {/* :contentReference[oaicite:5]{index=5} */}
+      <StatusBar cpu={cpu} lastSaved={state.lastSaved} />
     </div>
   );
 }
