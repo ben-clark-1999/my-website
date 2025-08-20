@@ -80,16 +80,26 @@
 /* ------------------------------
    Resets & layout fixes
    ------------------------------ */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  height: 100%;
+
+  /* ✅ allow full scrolling instead of locking */
+  height: auto;
+  min-height: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
-/* body {
-  min-height: 0dvh;
-} */
+/* iOS Safari viewport quirk fix */
+@supports (-webkit-touch-callout: none) {
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+  }
+}
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0; /* kill browser default */
@@ -112,9 +122,4 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
   padding-top: .5rem;
   padding-bottom: .5rem;
-}
-/* Lock the page; we'll scroll an inner container instead */
-html, body {
-  height: 100%;
-  overflow: hidden;   /* ← stops the page from scrolling at all */
 }
